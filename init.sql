@@ -126,3 +126,25 @@ CREATE TABLE announce (
         (instructor_id IS NULL AND admin_id IS NOT NULL)
     )
 );
+
+CREATE TABLE notifications (
+    notification_id INTEGER PRIMARY KEY,
+    student_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    date_sent DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);
+
+CREATE TRIGGER notify_students_on_syllabus_update
+AFTER UPDATE ON courses
+FOR EACH ROW
+WHEN OLD.syllabus IS NOT NEW.syllabus
+BEGIN
+    INSERT INTO notifications (student_id, course_id, message)
+    SELECT enrollments.student_id, NEW.course_id,
+           'The syllabus for ' || NEW.title || ' has been updated.'
+    FROM enrollments
+    WHERE enrollments.course_id = NEW.course_id;
+END;
