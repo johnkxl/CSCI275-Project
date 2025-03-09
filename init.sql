@@ -57,9 +57,12 @@ CREATE TABLE courses (
     capacity INTEGER DEFAULT 30,
     term TEXT NOT NULL,
     year INTEGER NOT NULL,
+    syllabus TEXT,
+    faculty_id INTEGER,
     FOREIGN KEY (term, year) REFERENCES terms(term, year), -- Composite foreign key
     FOREIGN KEY (department) REFERENCES departments(department_name),
-    FOREIGN KEY (room) REFERENCES rooms(room_number)
+    FOREIGN KEY (room) REFERENCES rooms(room_number),
+    FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
 );
 
 CREATE TABLE prerequisites (
