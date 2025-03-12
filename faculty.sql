@@ -35,10 +35,43 @@ WHERE c.instructor_id = :instructor_id
 
 
 -- update course details such as syllabus, class schedule, and grading criteria
-
-
-
+UPDATE courses
+SET syllabus = 'New syllabus content'
+WHERE course_id = 1;
 
 
 
 -- post announcements for registered students
+-- use transaction to post announcement
+BEGIN TRANSACTION;
+-- 1. insert announcement
+INSERT INTO announcements (title, body, date)
+VALUES ('Class canceled', 'Class canceled due to weather.', DATETIME('now'));
+
+-- 2. get announcement_id
+SELECT last_insert_rowid() INTO @announcement_id;
+
+-- 3. get faculty_id
+SELECT faculty_id INTO @faculty_id
+FROM faculty
+WHERE faculty_email = 'professor@example.com';
+
+-- 4. insert announcement after checking
+INSERT INTO announce (announcement_id, instructor_id)
+VALUES (@announcement_id, @faculty_id);
+
+COMMIT;
+
+
+
+-- create trigger to update notifications table automatically
+CREATE TRIGGER notify_students_on_announcement
+AFTER INSERT ON announce
+FOR EACH ROW
+BEGIN
+    INSERT INTO notifications (student_id, course_id, message)
+    SELECT enrollments.student_id, courses.course_id, 'New announcement posted for your course!'
+    FROM enrollments
+    JOIN courses ON enrollments.course_id = courses.course_id
+    WHERE courses.faculty_id = NEW.instructor_id;
+END;
