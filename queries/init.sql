@@ -1,4 +1,4 @@
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     student_id INTEGER PRIMARY KEY,
     first_name TEXT NOT NULL,
     middle_name TEXT,
@@ -10,7 +10,7 @@ CREATE TABLE students (
     FOREIGN KEY (major) REFERENCES departments(department_name)
 );
 
-CREATE TABLE faculty (
+CREATE TABLE IF NOT EXISTS faculty (
     faculty_id INTEGER PRIMARY KEY,
     first_name TEXT NOT NULL,
     middle_name TEXT,
@@ -21,48 +21,51 @@ CREATE TABLE faculty (
     FOREIGN KEY (department) REFERENCES departments(department_name)
 );
 
-CREATE TABLE admin (
+CREATE TABLE IF NOT EXISTS admin (
     admin_id INTEGER PRIMARY KEY,
     first_name TEXT NOT NULL,
     middle_name TEXT,
     last_name TEXT NOT NULL,
     admin_email TEXT UNIQUE NOT NULL,
     personal_email TEXT UNIQUE NOT NULL
-)
+);
 
-CREATE TABLE departments (
-    department_name TEXT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS departments (
+    department_id TEXT PRIMARY KEY,
+    department_name TEXT NOT NULL,
     department_chair INTEGER NOT NULL,
     department_email TEXT UNIQUE NOT NULL,
     FOREIGN KEY (department_chair) REFERENCES faculty(faculty_id)
 );
 
-CREATE TABLE terms (
+CREATE TABLE IF NOT EXISTS terms (
     term TEXT NOT NULL,
     year INTEGER NOT NULL,
     registration_deadline DATE NOT NULL,
     drop_deadline DATE NOT NULL,
-    PRIMARY KEY (term, year) -- Composite primary key
+    PRIMARY KEY (term, year), -- Composite primary key
     CHECK (term IN ('Fall', 'Winter', 'Spring', 'Summer'))
 );
 
-CREATE TABLE courses (
+CREATE TABLE IF NOT EXISTS courses (
     course_id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     course_code TEXT NOT NULL,
     info TEXT NOT NULL,
+    instructor_id INTEGER NOT NULL,
     credit_hours INTEGER NOT NULL,
     department TEXT NOT NULL,
     room TEXT NULL,
     capacity INTEGER DEFAULT 30,
     term TEXT NOT NULL,
     year INTEGER NOT NULL,
+    FOREIGN KEY (instructor_id) REFERENCES faculty(faculty_id)
     FOREIGN KEY (term, year) REFERENCES terms(term, year), -- Composite foreign key
     FOREIGN KEY (department) REFERENCES departments(department_name),
     FOREIGN KEY (room) REFERENCES rooms(room_number)
 );
 
-CREATE TABLE prerequisites (
+CREATE TABLE IF NOT EXISTS prerequisites (
     course_id INTEGER,
     prereq_id INTEGER,
     PRIMARY KEY (course_id, prereq_id),
@@ -70,14 +73,19 @@ CREATE TABLE prerequisites (
     FOREIGN KEY (prereq_id) REFERENCES courses(course_id)
 );
 
-CREATE TABLE timeblocks (
-    timeblock_id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS timeblocks (
+    timeblock_id TEXT PRIMARY KEY,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     day TEXT NOT NULL
 );
 
-CREATE TABLE courseblock (
+CREATE TABLE IF NOT EXISTS days (
+    day TEXT PRIMARY KEY,
+    day_int INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS courseblocks (
     course_id INTEGER,
     timeblock_id INTEGER,
     PRIMARY KEY (course_id, timeblock_id),
@@ -85,7 +93,7 @@ CREATE TABLE courseblock (
     FOREIGN KEY (timeblock_id) REFERENCES timeblocks(timeblock_id)
 );
 
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
     student_id INTEGER,
     course_id INTEGER,
     grade INTEGER DEFAULT NULL,
@@ -102,19 +110,19 @@ CREATE TABLE enrollments (
     FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
 
-CREATE TABLE rooms (
+CREATE TABLE IF NOT EXISTS rooms (
     room_number TEXT PRIMARY KEY,
     building TEXT NOT NULL
 );
 
-CREATE TABLE announcements (
+CREATE TABLE IF NOT EXISTS announcements (
     announcement_id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
     date DATETIME NOT NULL
 );
 
-CREATE TABLE announce (
+CREATE TABLE IF NOT EXISTS announce (
     announcement_id INTEGER,
     instructor_id INTEGER NULL,
     admin_id INTEGER NULL,

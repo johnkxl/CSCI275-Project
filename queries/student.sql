@@ -16,6 +16,8 @@ SELECT
     c.credit_hours,
     c.department,
     c.room,
+    c.term,
+    c.year,
     tb.timeblock_id,
     tb.start_time,
     tb.end_time,
@@ -138,29 +140,52 @@ WHERE student_id = :student_id
 --
 -- The query returns a list of courses with their timeblocks and grades.
 --
-SELECT 
-    c.course_id,
-    c.title,
-    c.course_code,
-    c.info,
-    c.credit_hours,
-    c.department,
-    c.room,
-    c.term,
-    c.year,
+WITH curr AS (
+    SELECT * 
+    FROM enrollments e
+    JOIN courses c ON c.course_id = e.course_id
+    WHERE e.student_id = 1
+    AND e.status = 'In Progress'
+)
+SELECT
+    curr.course_id,
+    curr.title,
+    curr.course_code,
+    curr.info,
+    curr.instructor_id,
+    curr.credit_hours,
+    curr.department,
+    curr.room,
+    curr.term,
+    curr.year,
     tb.timeblock_id,
     tb.start_time,
     tb.end_time,
-    tb.day,
-FROM enrollments e
-JOIN courses c ON e.course_id = c.course_id
-LEFT JOIN courseblock cb ON c.course_id = cb.course_id
-LEFT JOIN timeblocks tb ON cb.timeblock_id = tb.timeblock_id
-WHERE e.student_id = :student_id
-  AND e.status = 'In Progress'
-ORDER BY c.course_id, tb.timeblock_id;
-
+    tb.day
+FROM curr
+JOIN courseblocks cb ON cb.course_id = curr.course_id
+JOIN timeblocks tb ON tb.timeblock_id = cb.timeblock_id
+ORDER BY
+    CASE
+        WHEN curr.term = 'Fall' THEN 1
+        WHEN curr.term = 'Winter' THEN 2
+        ELSE 3
+    END,
+    CASE
+        WHEN tb.day = 'Monday' THEN 1
+        WHEN tb.day = 'Tuesday' THEN 2
+        WHEN tb.day = 'Wednesday' THEN 3
+        WHEN tb.day = 'Thursday' THEN 4
+        WHEN tb.day = 'Friday' THEN 5
+    END,
+    tb.start_time;
 
 
 -- TODO
 -- receive notifications for important updates like registration deadlines
+
+
+
+
+-- GET LIST OF DEPARTMENTS
+SELECT department_id FROM departments;
