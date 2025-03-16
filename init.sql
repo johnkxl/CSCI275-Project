@@ -31,6 +31,7 @@ CREATE TABLE admin (
 )
 
 CREATE TABLE departments (
+    department_id TEXT PRIMARY KEY,
     department_name TEXT PRIMARY KEY,
     department_chair INTEGER NOT NULL,
     department_email TEXT UNIQUE NOT NULL,
@@ -58,11 +59,11 @@ CREATE TABLE courses (
     term TEXT NOT NULL,
     year INTEGER NOT NULL,
     syllabus TEXT,
-    faculty_id INTEGER,
+    instructor_id INTEGER,
     FOREIGN KEY (term, year) REFERENCES terms(term, year), -- Composite foreign key
     FOREIGN KEY (department) REFERENCES departments(department_name),
     FOREIGN KEY (room) REFERENCES rooms(room_number),
-    FOREIGN KEY (faculty_id) REFERENCES faculty(faculty_id)
+    FOREIGN KEY (instructor_id) REFERENCES faculty(faculty_id)
 );
 
 CREATE TABLE prerequisites (
@@ -151,3 +152,23 @@ BEGIN
     FROM enrollments
     WHERE enrollments.course_id = NEW.course_id;
 END;
+
+CREATE TABLE IF NOT EXISTS student_management (
+   admin_id INTEGER NOT NULL,
+   student_id INTEGER NOT NULL,
+   action TEXT, -- this would be something like 'create', 'modify', or 'delete', whatever student they edit
+   date DATETIME NOT NULL,
+   PRIMARY KEY (admin_id, student_id),
+   FOREIGN KEY (admin_id) REFERENCES admin(admin_id),
+   FOREIGN KEY (student_id) REFERENCES students(student_id)
+);
+
+CREATE TABLE IF NOT EXISTS course_management (
+   admin_id INTEGER NOT NULL,
+   course_id INTEGER NOT NULL,
+   action TEXT, -- this would be something like 'create', 'modify', or 'delete', whatever course they edit
+   date DATETIME NOT NULL,
+   PRIMARY KEY (admin_id, course_id),
+   FOREIGN KEY (admin_id) REFERENCES admin(admin_id),
+   FOREIGN KEY (course_id) REFERENCES courses(course_id)
+);

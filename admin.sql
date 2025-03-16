@@ -1,5 +1,6 @@
 --Construct a sample data entry.
 -- 1. insert course
+BEGIN TRANSACTION;
 INSERT INTO courses (
     title, course_code, info, credit_hours, department, room, capacity, term, year, syllabus, faculty_id
 ) VALUES (
@@ -25,10 +26,12 @@ VALUES (
     (SELECT timeblock_id FROM timeblocks WHERE start_time = '10:00:00' AND end_time = '11:30:00' AND day = 'Monday')
 );
 
+COMMIT;
 
 
 --Drop course
 -- 1. delete related enrollments info
+BEGIN TRANSACTION;
 DELETE FROM enrollments
 WHERE
 course_id = (SELECT course_id FROM courses WHERE course_code = 'AI101');
@@ -52,3 +55,32 @@ WHERE course_code = 'AI101';
 DELETE FROM courses
 WHERE course_code = 'AI101'
 AND (SELECT drop_deadline FROM terms WHERE term = courses.term AND year = courses.year) >= DATE('now');
+
+COMMIT;
+
+
+-- Update course details such as syllabus, class schedule
+BEGIN TRANSACTION;
+
+UPDATE courses
+SET syllabus = 'Updated syllabus content for AI101.',
+    term = 'Winter',
+    year = 2025,
+    credit_hours = 4
+WHERE course_code = 'AI101';
+
+-- recheck the timeblock
+UPDATE courseblock
+SET timeblock_id = (
+    SELECT timeblock_id FROM timeblocks
+    WHERE start_time = '14:00:00' AND end_time = '15:30:00' AND day = 'Wednesday'
+)
+WHERE course_id = (SELECT course_id FROM courses WHERE course_code = 'AI101');
+
+-- recheck the room whether is available
+UPDATE courses
+SET room = 'Room 202'
+WHERE course_code = 'AI101'
+AND EXISTS (SELECT 1 FROM rooms WHERE room_number = 'Room 202');
+
+COMMIT;

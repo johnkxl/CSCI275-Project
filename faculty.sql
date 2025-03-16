@@ -39,6 +39,11 @@ UPDATE courses
 SET syllabus = 'New syllabus content'
 WHERE course_id = 1;
 
+UPDATE courses
+SET syllabus = 'Updated syllabus for Winter 2026.',
+    term = 'Winter',
+    year = 2025
+WHERE course_id = 1;
 
 
 -- post announcements for registered students
@@ -64,7 +69,7 @@ COMMIT;
 
 
 
--- create trigger to update notifications table automatically
+-- create trigger to update notifications table about announcement automatically
 CREATE TRIGGER notify_students_on_announcement
 AFTER INSERT ON announce
 FOR EACH ROW

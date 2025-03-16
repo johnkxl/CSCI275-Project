@@ -164,3 +164,16 @@ ORDER BY c.course_id, tb.timeblock_id;
 
 -- TODO
 -- receive notifications for important updates like registration deadlines
+CREATE TRIGGER notify_students_on_deadline_change
+AFTER UPDATE ON terms
+FOR EACH ROW
+WHEN OLD.registration_deadline IS NOT NEW.registration_deadline
+BEGIN
+    INSERT INTO notifications (student_id, course_id, message)
+    SELECT DISTINCT enrollments.student_id, enrollments.course_id,
+           'Registration deadline for term ' || NEW.term || ' ' || NEW.year ||
+           ' has been updated to ' || NEW.registration_deadline || '.'
+    FROM enrollments
+    JOIN courses ON enrollments.course_id = courses.course_id
+    WHERE courses.term = NEW.term AND courses.year = NEW.year;
+END;
