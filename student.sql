@@ -162,7 +162,6 @@ ORDER BY c.course_id, tb.timeblock_id;
 
 
 
--- TODO
 -- receive notifications for important updates like registration deadlines
 CREATE TRIGGER notify_students_on_deadline_change
 AFTER UPDATE ON terms

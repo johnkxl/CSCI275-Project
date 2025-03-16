@@ -35,15 +35,30 @@ WHERE c.instructor_id = :instructor_id
 
 
 -- update course details such as syllabus, class schedule, and grading criteria
-UPDATE courses
-SET syllabus = 'New syllabus content'
-WHERE course_id = 1;
+BEGIN TRANSACTION;
 
 UPDATE courses
-SET syllabus = 'Updated syllabus for Winter 2026.',
+SET syllabus = 'Updated syllabus content for AI101.',
     term = 'Winter',
-    year = 2025
-WHERE course_id = 1;
+    year = 2025,
+    credit_hours = 4
+WHERE course_code = 'AI101';
+
+-- recheck the timeblock
+UPDATE courseblock
+SET timeblock_id = (
+    SELECT timeblock_id FROM timeblocks
+    WHERE start_time = '14:00:00' AND end_time = '15:30:00' AND day = 'Wednesday'
+)
+WHERE course_id = (SELECT course_id FROM courses WHERE course_code = 'AI101');
+
+-- recheck the room whether is available
+UPDATE courses
+SET room = 'Room 202'
+WHERE course_code = 'AI101'
+AND EXISTS (SELECT 1 FROM rooms WHERE room_number = 'Room 202');
+
+COMMIT;
 
 
 -- post announcements for registered students
