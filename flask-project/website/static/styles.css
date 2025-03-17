@@ -1,3 +1,165 @@
+/* Make the body take full height and prevent unwanted scrolling */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent full-page scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styling - Stays fixed at the top */
+header {
+    height: 60px; /* Adjust as needed */
+    width: 100%;
+    background: white;
+    border-bottom: 2px solid #ddd;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+
+/*style.css*/
+#login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    background: #f3f3f3;
+    flex-direction: column;
+    margin: 0;
+}
+
+.main {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transform 0.2s;
+    width: 500px;
+    text-align: center;
+}
+
+h1 {
+    /* color: #4CAF50; */
+    color: navy;
+}
+
+label {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    color: #555;
+    font-weight: bold;
+}
+
+input {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    /* background-color: #4CAF50; */
+    background-color: navy;
+    width: 100%;
+    font-size: 16px;
+}
+
+.wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Main content should take the remaining space after the header */
+.container-fluid {
+    flex: 1;
+    display: flex;
+    overflow: hidden; /* Prevents entire page from scrolling */
+}
+
+/* Left schedule container */
+.schedule-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Ensure tab navigation remains visible */
+#scheduleTabs {
+    flex-shrink: 0;
+}
+
+/* Allow only the schedule content to scroll */
+.schedule-scroll {
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+/* Right search panel */
+.search-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: white;
+}
+
+/* Keep the filter dropdown visible */
+.search-nav {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Make only the course search results scrollable */
+.search-results {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+
+
+
+
 /* Reduce or remove container spacing */
 .container-fluid {
     margin: 0;
@@ -63,10 +225,13 @@ body {
 /* Class blocks */
 .class-block {
     position: absolute;
-    width: 100%;
-    text-align: center;
+    width: 99%;
+    text-align: left;
     color: white;
+    background-color: black;
     border-radius: 5px;
+    font-size: 14px;
+    padding: 10px;
 }
   
 

@@ -85,7 +85,7 @@ class Student(db.Model):
         db.session.add(new_enrollment)
         db.session.commit()
 
-        return {"message": f"✅ Enrolled in course {course_id}"}, 201
+        return {"message": f"✅ Enrolled in course {course_id}"}, 200
     
     def drop(self, course_id) -> tuple[dict, int]:
         course = Enrollment.query.filter(Enrollment.student_id == self.student_id,
@@ -98,7 +98,7 @@ class Student(db.Model):
         db.session.delete(course)
         db.session.commit()
 
-        return {"message": f"✅ Dropped course {course_id}"}, 201
+        return {"message": f"✅ Dropped course {course_id}"}, 200
     
     def get_schedule(self):
         # Query to fetch the courses in progress for student_id = 1
